@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "528162425018",
+    "firebase_url": "https://that-s-my-type.firebaseio.com",
+    "project_id": "that-s-my-type",
+    "storage_bucket": "that-s-my-type.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:528162425018:android:96d6869c982cb77fe29a83",
+        "android_client_info": {
+          "package_name": "com.www.thatismytype"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "528162425018-ediuecopkp4q8aukhmikfjb46aj10p6f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.www.thatismytype",
+            "certificate_hash": "7a5df08d6cd6d14fa90c4de410b603a0444ca149"
+          }
+        },
+        {
+          "client_id": "528162425018-pevklvdmmkfhcuu9qjkfe8cqlo4ca95b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB03EAsFMDTYb3rKeT_zLXCR6Ssr3NDoZI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "528162425018-pevklvdmmkfhcuu9qjkfe8cqlo4ca95b.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "528162425018-diamgsac5bun1fqod0ni1q0ngl693udh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.www.thatismytype"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
