@@ -26,6 +26,8 @@ dependencies:
   multi_image_picker: ^4.6.5+rc.1
   animated_text_kit: ^2.0.0
   image_cropper: ^1.2.1
+  flutter_svg: ^0.17.4
+  font_awesome_flutter: ^8.8.1
   flutter:
     sdk: flutter
 
@@ -48,7 +50,8 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-  #assets:
+  assets:
+    - images/
 
   fonts:
   - family: Playfair
@@ -87,5 +90,8 @@ flutter:
   - family: Dancing Script
     fonts:
     - asset: fonts/Raleway-Regular.ttf
+  - family: Gothic Semi-bold
+    fonts:
+    - asset: fonts/GothicA1-SemiBold.ttf
 
 
