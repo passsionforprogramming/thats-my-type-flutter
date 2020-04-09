@@ -3,6 +3,11 @@ import "package:flutter/material.dart";
 import 'package:thatismytype/Constants/Palette.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import "package:cloud_firestore/cloud_firestore.dart";
+import 'package:page_transition/page_transition.dart';
+import 'package:thatismytype/Screens/Home/Home.dart';
 
 class Greeting extends StatefulWidget {
   @override
@@ -16,6 +21,10 @@ class _GreetingState extends State<Greeting> with TickerProviderStateMixin {
   Animation firstWordAnimation;
   Animation secondWordAnimation;
   Animation thirdWordAnimation;
+  final FacebookLogin facebookLogin = FacebookLogin();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final CollectionReference usersRef = Firestore.instance.collection("users");
+  FirebaseUser loggedInUser;
   @override
   void initState() {
     firstAnimationController =
@@ -55,7 +64,29 @@ class _GreetingState extends State<Greeting> with TickerProviderStateMixin {
     Timer(Duration(seconds: 4), () => thirdAnimationController.forward());
   }
 
-  navigateToFaceBookSignIn() {}
+  navigateToFaceBookSignIn() async {
+    final FacebookLoginResult facebookLoginResult =
+        await facebookLogin.logIn(["email"]);
+    if (facebookLoginResult.status == FacebookLoginStatus.loggedIn) {
+      final AuthCredential credential = FacebookAuthProvider.getCredential(
+          accessToken: facebookLoginResult.accessToken.token);
+      loggedInUser = (await _auth.signInWithCredential(credential)).user;
+      print("signed in ${loggedInUser.displayName}");
+      loggedInUser.linkWithCredential(credential);
+      await usersRef.document(loggedInUser.uid).setData({
+        "name": loggedInUser.displayName,
+        "mediaUrl": loggedInUser.photoUrl
+      });
+      Navigator.pushReplacement(
+        context,
+        PageTransition(
+          type: PageTransitionType.leftToRight,
+          duration: Duration(milliseconds: 200),
+          child: Home(),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
