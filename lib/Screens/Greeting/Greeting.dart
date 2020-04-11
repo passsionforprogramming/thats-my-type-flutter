@@ -188,12 +188,12 @@ class _GreetingState extends State<Greeting> with TickerProviderStateMixin {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Icon(Icons.phone, color: Colors.white),
+                  Icon(Icons.email, color: Colors.white),
                   SizedBox(
                     width: screenWidth * .03,
                   ),
                   Text(
-                    "Use cell phone number",
+                    "Use email",
                     style: TextStyle(
                         fontFamily: "Gothic Semi-bold",
                         color: Colors.white,
