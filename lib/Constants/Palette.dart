@@ -13,3 +13,4 @@ const kOtherBackgroundColor = Color(0xFFf0ede6);
 const kGreen = Color(0xFF20c1bd);
 const kDarkerGreen = Color(0xFF1fa5a6);
 const klighterGreen = Color(0xFFb2dedd);
+const kDarkBlue = Color(0xFF2B394A);
