@@ -87,6 +87,18 @@ class _GreetingState extends State<Greeting> with TickerProviderStateMixin {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    passwordFocusNode.dispose();
+    emailFocusNode.dispose();
+    passwordController.dispose();
+    firstAnimationController.dispose();
+    secondAnimationController.dispose();
+    thirdAnimationController.dispose();
+    emailController.dispose();
+    super.dispose();
+  }
+
   void trackState() {
     setState(() {});
   }
@@ -333,6 +345,7 @@ class _GreetingState extends State<Greeting> with TickerProviderStateMixin {
             obscureText: true,
             controller: passwordController,
             textInputAction: TextInputAction.done,
+            focusNode: passwordFocusNode,
             onFieldSubmitted: (val) {
               handleSubmit();
             },
@@ -396,7 +409,9 @@ class _GreetingState extends State<Greeting> with TickerProviderStateMixin {
                         fontFamily: "Gothic Semi-bold",
                         fontSize: 16.0),
                   ),
-            onPressed: () {},
+            onPressed: () {
+              handleSubmit();
+            },
           ),
         ),
         Container(
@@ -496,12 +511,14 @@ class _GreetingState extends State<Greeting> with TickerProviderStateMixin {
   }
 
   void handleSubmit() {
+    print("handle submit triggered");
     if (signUpKey.currentState.validate()) {
       signInMode ? handleSignIn() : handleSignUp();
     }
   }
 
   Future<void> handleSignIn() async {
+    print("in sign in");
     try {
       setState(() {
         loading = true;
@@ -518,6 +535,8 @@ class _GreetingState extends State<Greeting> with TickerProviderStateMixin {
                 duration: Duration(milliseconds: 200)));
       }
     } catch (e) {
+      print(e);
+      print("I am in sign in");
       setState(() {
         loading = false;
       });
@@ -545,6 +564,7 @@ class _GreetingState extends State<Greeting> with TickerProviderStateMixin {
   }
 
   Future<void> handleSignUp() async {
+    print("in sign up");
     try {
       setState(() {
         loading = true;
@@ -565,6 +585,8 @@ class _GreetingState extends State<Greeting> with TickerProviderStateMixin {
                 duration: Duration(milliseconds: 200)));
       }
     } catch (e) {
+      print(e);
+      print("I am in signup");
       setState(() {
         loading = false;
       });
