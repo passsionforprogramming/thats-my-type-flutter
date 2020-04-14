@@ -505,8 +505,8 @@ class _GreetingState extends State<Greeting> with TickerProviderStateMixin {
     );
   }
 
-  String emailValidator(String email) {
-    if (validEmail()) return null;
+  String emailValidator(val) {
+    if (validEmail(email: email)) return null;
     return "Plese enter a valid email";
   }
 
