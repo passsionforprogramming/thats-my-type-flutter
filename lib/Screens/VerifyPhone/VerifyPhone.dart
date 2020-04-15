@@ -60,6 +60,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
       try {
         final PhoneVerificationCompleted verificationCompleted =
             (AuthCredential phoneCredential) async {
+          loggedInUser.linkWithCredential(phoneCredential);
           print("verification completed");
           Navigator.pushReplacement(
               context,
@@ -120,7 +121,22 @@ class _VerifyPhoneState extends State<VerifyPhone> {
       AuthCredential credential = PhoneAuthProvider.getCredential(
           verificationId: verificationId, smsCode: smsCode);
       this.credential = credential;
-      loggedInUser.linkWithCredential(credential);
+      loggedInUser.linkWithCredential(credential).then((AuthResult result) {
+        print(result);
+        Navigator.pushReplacement(
+            context,
+            PageTransition(
+                type: PageTransitionType.leftToRightWithFade,
+                duration: Duration(seconds: 1),
+                child: ProfileSetup()));
+      }).catchError((onError) {
+        String invalidCodeError = "ERROR_INVALID_VERIFICATION_CODE";
+        if (onError.toString().contains(invalidCodeError)) {
+          setState(() {
+            phoneErrorText = "Code invalid. Please try again";
+          });
+        }
+      });
       print("credential $credential");
       print("link credential triggered");
     } catch (e) {
@@ -335,6 +351,18 @@ class _VerifyPhoneState extends State<VerifyPhone> {
             style: TextStyle(fontFamily: "Gothic", fontSize: 18.0),
           ),
         ),
+        phoneErrorText != null
+            ? Container(
+                margin: EdgeInsets.symmetric(
+                    horizontal: screenWidth * .1, vertical: screenHeight * .03),
+                width: screenWidth * .7,
+                alignment: Alignment.center,
+                child: Text(
+                  phoneErrorText,
+                  style: TextStyle(color: Colors.red, fontSize: 18.0),
+                ),
+              )
+            : SizedBox(),
         Container(
           width: screenWidth * .6,
           margin: EdgeInsets.symmetric(horizontal: screenWidth * .15),
