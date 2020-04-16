@@ -35,6 +35,7 @@ dependencies:
   flutter_country_picker: ^0.1.6
   phone_number: ^0.6.2
   pin_code_fields: ^2.5.1
+  uuid: 2.0.4
 
   flutter:
     sdk: flutter
@@ -95,11 +96,17 @@ flutter:
   - family: Dancing Script
     fonts:
       - asset: fonts/DancingScript-Regular.ttf
-  - family: Dancing Script
+  - family: Raleway
     fonts:
     - asset: fonts/Raleway-Regular.ttf
   - family: Gothic Semi-bold
     fonts:
     - asset: fonts/GothicA1-SemiBold.ttf
+  - family: Raleway Bold
+    fonts:
+    - asset: fonts/Raleway-Bold.ttf
+  - family: Playfair Bold
+    fonts:
+    - asset: fonts/PlayfairDisplay-Bold.ttf
 
 
