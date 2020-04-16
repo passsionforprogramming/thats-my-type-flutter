@@ -151,6 +151,8 @@ class _VerifyPhoneState extends State<VerifyPhone> {
   }
 
   _resendCodeToPhoneNumber() async {
+    pinController.clear();
+    smsCode = "";
     final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
         (String verificationId) {
       this.verificationId = verificationId;
