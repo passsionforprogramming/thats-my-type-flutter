@@ -1,9 +1,15 @@
+import 'dart:io';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:thatismytype/Constants/Palette.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:image/image.dart' as Im;
 
 class ProfileSetup extends StatefulWidget {
   @override
@@ -13,9 +19,93 @@ class ProfileSetup extends StatefulWidget {
 class _ProfileSetupState extends State<ProfileSetup> {
   bool loading = false;
   String imageID = Uuid().v4(); //initializing UUID
+  File file;
   final StorageReference storageRef = FirebaseStorage.instance.ref();
 
-  void addPhoto() {}
+  chooseImage() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: Text('Event photo'),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0)),
+            children: <Widget>[
+              SimpleDialogOption(
+                onPressed: handleCamera,
+                child: ListTile(
+                  leading: SvgPicture.asset(
+                    'images/camera.svg',
+                    semanticsLabel: 'Camera',
+                    height: 50.0,
+                  ),
+                  title: Text(
+                    'Camera',
+                    style: TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              SimpleDialogOption(
+                onPressed: handleGallery,
+                child: ListTile(
+                  leading: SvgPicture.asset(
+                    'images/gallery.svg',
+                    semanticsLabel: 'Gallery',
+                    height: 50.0,
+                  ),
+                  title: Text(
+                    'Gallery',
+                    style: TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              )
+            ],
+          );
+        });
+  }
+
+  void handleGallery() async {
+    Navigator.of(context, rootNavigator: true).pop();
+    File file = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      this.file = file;
+      loading = true;
+    });
+    File croppedFile = await ImageCropper.cropImage(
+        sourcePath: file.path,
+        aspectRatio: CropAspectRatio(ratioX: 1.0, ratioY: 1.0));
+    setState(() {
+      loading = false;
+      if (croppedFile != null) {
+        this.file = croppedFile;
+      }
+    });
+  }
+
+  void handleCamera() async {
+    Navigator.of(context, rootNavigator: true).pop();
+    File file = await ImagePicker.pickImage(source: ImageSource.camera);
+    setState(() {
+      this.file = file;
+    });
+  }
+
+  compressImage() async {
+    final tempDir =
+        await getTemporaryDirectory(); //creating temporary directory
+    final path = tempDir.path; //creating temporary path from directory
+    Im.Image imageFile =
+        Im.decodeImage(file.readAsBytesSync()); //reading file stored in state
+    final compressedImageFile = File('$path/img_$imageID.jpg')
+      ..writeAsBytesSync(
+          Im.encodeJpg(imageFile, quality: 85)); //writing JPG to temporary path
+    setState(() {
+      file = compressedImageFile;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -95,7 +185,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
                 width: screenWidth * .8,
                 margin: EdgeInsets.symmetric(horizontal: screenWidth * .1),
                 child: RaisedButton(
-                  onPressed: addPhoto,
+                  onPressed: chooseImage,
                   color: kDarkerGreen,
                   child: Text(
                     "Add Photo",

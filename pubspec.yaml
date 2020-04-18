@@ -36,6 +36,9 @@ dependencies:
   phone_number: ^0.6.2
   pin_code_fields: ^2.5.1
   uuid: 2.0.4
+  intl: ^0.16.0
+  image_picker: ^0.6.5
+  image: ^2.1.4
 
   flutter:
     sdk: flutter
