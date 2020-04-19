@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:thatismytype/Constants/Palette.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:thatismytype/Screens/ProfileSetup/CircleImageDisplay.dart';
 import 'package:uuid/uuid.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -21,7 +22,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
   String imageID = Uuid().v4(); //initializing UUID
   File file;
   final StorageReference storageRef = FirebaseStorage.instance.ref();
-
+  List<File> _images = List.generate(6, (index) => null, growable: true);
   chooseImage() {
     showDialog(
         context: context,
@@ -66,6 +67,24 @@ class _ProfileSetupState extends State<ProfileSetup> {
         });
   }
 
+  void insertImage({File file}) {
+    for (int i = 0; i < _images.length; i++) {
+      if (_images[i] == null) {
+        setState(() {
+          _images[i] = file;
+        });
+        break;
+      }
+    }
+  }
+
+  void removeImage(int idx) {
+    _images.removeAt(idx);
+    setState(() {
+      _images.add(null);
+    });
+  }
+
   void handleGallery() async {
     Navigator.of(context, rootNavigator: true).pop();
     File file = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -79,9 +98,20 @@ class _ProfileSetupState extends State<ProfileSetup> {
     setState(() {
       loading = false;
       if (croppedFile != null) {
-        this.file = croppedFile;
+        insertImage(file: croppedFile);
+        this.file = null;
       }
     });
+  }
+
+  multiImageBuilder() {
+    return GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3, crossAxisSpacing: 4.0, mainAxisSpacing: 4.0),
+        itemBuilder: (BuildContext context, int index) {
+          return GestureDetector(
+              onTap: () {}, child: CircleImageDisplay(_images[index]));
+        });
   }
 
   void handleCamera() async {
@@ -89,6 +119,16 @@ class _ProfileSetupState extends State<ProfileSetup> {
     File file = await ImagePicker.pickImage(source: ImageSource.camera);
     setState(() {
       this.file = file;
+    });
+    File croppedFile = await ImageCropper.cropImage(
+        sourcePath: file.path,
+        aspectRatio: CropAspectRatio(ratioX: 1.0, ratioY: 1.0));
+    setState(() {
+      loading = false;
+      if (croppedFile != null) {
+        insertImage(file: croppedFile);
+        this.file = null;
+      }
     });
   }
 
@@ -153,10 +193,15 @@ class _ProfileSetupState extends State<ProfileSetup> {
                 alignment: Alignment.center,
                 width: screenHeight * .3,
                 height: screenHeight * .3,
-                child: Icon(
-                  Icons.person_pin,
-                  size: screenHeight * .25,
-                ),
+                child: _images[0] != null
+                    ? Icon(
+                        Icons.person_pin,
+                        size: screenHeight * .25,
+                      )
+                    : null,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(image: FileImage(_images[0]))),
               ),
               Container(
                 alignment: Alignment.center,
