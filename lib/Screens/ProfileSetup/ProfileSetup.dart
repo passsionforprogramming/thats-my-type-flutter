@@ -28,7 +28,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(
-            title: Text('Event photo'),
+            title: Text('Profile photo'),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0)),
             children: <Widget>[
@@ -68,11 +68,12 @@ class _ProfileSetupState extends State<ProfileSetup> {
   }
 
   void insertImage({File file}) {
-    for (int i = 0; i < _images.length; i++) {
+    for (int i = 0; i < 6; i++) {
       if (_images[i] == null) {
         setState(() {
           _images[i] = file;
         });
+        print("Here is i: $i");
         break;
       }
     }
@@ -104,8 +105,17 @@ class _ProfileSetupState extends State<ProfileSetup> {
     });
   }
 
+  Future<String> uploadImage(imageFile) async {
+    StorageUploadTask uploadTask =
+        storageRef.child("pro_$imageID.jpg").putFile(imageFile);
+    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+    String downloadUrl = await storageTaskSnapshot.ref.getDownloadURL();
+    return downloadUrl;
+  }
+
   multiImageBuilder() {
     return GridView.builder(
+        itemCount: _images.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3, crossAxisSpacing: 4.0, mainAxisSpacing: 4.0),
         itemBuilder: (BuildContext context, int index) {
@@ -146,6 +156,107 @@ class _ProfileSetupState extends State<ProfileSetup> {
     });
   }
 
+  Column initialImage(screenWidth, screenHeight) {
+    return Column(
+      children: <Widget>[
+        Container(
+          margin: EdgeInsets.only(top: screenHeight * .1),
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              CircleAvatar(
+                backgroundColor: kDarkerGreen,
+                radius: 5.0,
+              ),
+              SizedBox(
+                width: 3.0,
+              ),
+              CircleAvatar(
+                backgroundColor: Colors.grey[300],
+                radius: 5.0,
+              ),
+              SizedBox(
+                width: 3.0,
+              ),
+              CircleAvatar(
+                backgroundColor: Colors.grey[300],
+                radius: 5.0,
+              ),
+              SizedBox(
+                width: 3.0,
+              ),
+              CircleAvatar(
+                backgroundColor: Colors.grey[300],
+                radius: 5.0,
+              )
+            ],
+          ),
+        ),
+        GestureDetector(
+          onTap: chooseImage,
+          child: Container(
+            alignment: Alignment.center,
+            width: screenHeight * .3,
+            height: screenHeight * .3,
+            child: _images[0] == null
+                ? Icon(
+                    Icons.person_pin,
+                    size: screenHeight * .25,
+                  )
+                : null,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                image: _images[0] != null
+                    ? DecorationImage(image: FileImage(_images[0]))
+                    : null),
+          ),
+        ),
+        Container(
+          alignment: Alignment.center,
+          margin: EdgeInsets.symmetric(vertical: screenHeight * .03),
+          child: Text(
+            "Let's bulid your profile",
+            style: TextStyle(
+                fontFamily: "Raleway Bold",
+                color: kDarkerGreen,
+                fontSize: 26.0),
+          ),
+        ),
+        Container(
+          width: screenWidth * .6,
+          margin: EdgeInsets.symmetric(
+              horizontal: screenWidth * .2, vertical: screenHeight * .01),
+          child: Text(
+            "That's My Type is about building lasting connections between real people. Please add at least one photo of yourself with nobody else in the picture.",
+            style: TextStyle(color: kDarkerGreen, fontFamily: "Gothic"),
+          ),
+        ),
+        SizedBox(
+          height: screenHeight * .2,
+        ),
+        Container(
+          width: screenWidth * .8,
+          margin: EdgeInsets.symmetric(horizontal: screenWidth * .1),
+          child: RaisedButton(
+            onPressed: chooseImage,
+            color: kDarkerGreen,
+            child: Text(
+              "Add Photo",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16.0,
+                  fontFamily: "Gothic Semi-bold"),
+            ),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0)),
+            padding: EdgeInsets.symmetric(vertical: 13.0),
+          ),
+        )
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -153,99 +264,9 @@ class _ProfileSetupState extends State<ProfileSetup> {
     return Scaffold(
       body: ModalProgressHUD(
           inAsyncCall: loading,
-          child: Column(
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.only(top: screenHeight * .1),
-                alignment: Alignment.center,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    CircleAvatar(
-                      backgroundColor: kDarkerGreen,
-                      radius: 5.0,
-                    ),
-                    SizedBox(
-                      width: 3.0,
-                    ),
-                    CircleAvatar(
-                      backgroundColor: Colors.grey[300],
-                      radius: 5.0,
-                    ),
-                    SizedBox(
-                      width: 3.0,
-                    ),
-                    CircleAvatar(
-                      backgroundColor: Colors.grey[300],
-                      radius: 5.0,
-                    ),
-                    SizedBox(
-                      width: 3.0,
-                    ),
-                    CircleAvatar(
-                      backgroundColor: Colors.grey[300],
-                      radius: 5.0,
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                alignment: Alignment.center,
-                width: screenHeight * .3,
-                height: screenHeight * .3,
-                child: _images[0] != null
-                    ? Icon(
-                        Icons.person_pin,
-                        size: screenHeight * .25,
-                      )
-                    : null,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(image: FileImage(_images[0]))),
-              ),
-              Container(
-                alignment: Alignment.center,
-                margin: EdgeInsets.symmetric(vertical: screenHeight * .03),
-                child: Text(
-                  "Let's bulid your profile",
-                  style: TextStyle(
-                      fontFamily: "Raleway Bold",
-                      color: kDarkerGreen,
-                      fontSize: 26.0),
-                ),
-              ),
-              Container(
-                width: screenWidth * .6,
-                margin: EdgeInsets.symmetric(
-                    horizontal: screenWidth * .2, vertical: screenHeight * .01),
-                child: Text(
-                  "That's My Type is about building lasting connections between real people. Please add at least one photo of yourself with nobody else in the picture.",
-                  style: TextStyle(color: kDarkerGreen, fontFamily: "Gothic"),
-                ),
-              ),
-              SizedBox(
-                height: screenHeight * .2,
-              ),
-              Container(
-                width: screenWidth * .8,
-                margin: EdgeInsets.symmetric(horizontal: screenWidth * .1),
-                child: RaisedButton(
-                  onPressed: chooseImage,
-                  color: kDarkerGreen,
-                  child: Text(
-                    "Add Photo",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.0,
-                        fontFamily: "Gothic Semi-bold"),
-                  ),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0)),
-                  padding: EdgeInsets.symmetric(vertical: 13.0),
-                ),
-              )
-            ],
-          )),
+          child: _images[0] == null
+              ? initialImage(screenWidth, screenHeight)
+              : multiImageBuilder()),
     );
   }
 }
