@@ -20,10 +20,12 @@ class ProfileSetup extends StatefulWidget {
 class _ProfileSetupState extends State<ProfileSetup> {
   bool loading = false;
   String imageID = Uuid().v4(); //initializing UUID
+  int imageIdx;
   File file;
   final StorageReference storageRef = FirebaseStorage.instance.ref();
   List<File> _images = List.generate(6, (index) => null, growable: true);
-  chooseImage() {
+  chooseImage({index = 0}) {
+    imageIdx = index;
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -68,19 +70,24 @@ class _ProfileSetupState extends State<ProfileSetup> {
   }
 
   void insertImage({File file}) {
-    for (int i = 0; i < 6; i++) {
-      if (_images[i] == null) {
-        setState(() {
-          _images[i] = file;
-        });
-        print("Here is i: $i");
-        break;
-      }
-    }
+//    for (int i = 0; i < 6; i++) {
+//      if (_images[i] == null) {
+//        setState(() {
+//          _images[i] = file;
+//        });
+//        print("Here is i: $i");
+//        break;
+//      }
+//    }
+    setState(() {
+      _images[imageIdx] = file;
+    });
   }
 
   void removeImage(int idx) {
+    Navigator.of(context, rootNavigator: true).pop();
     _images.removeAt(idx);
+    print(_images);
     setState(() {
       _images.add(null);
     });
@@ -124,9 +131,40 @@ class _ProfileSetupState extends State<ProfileSetup> {
               mainAxisSpacing: screenWidth * .07),
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
-                onTap: () {}, child: CircleImageDisplay(_images[index]));
+                onTap: () {},
+                child: GestureDetector(
+                    onTap: () => chooseImage(index: index),
+                    onLongPress: () => _images[index] == null
+                        ? chooseImage(index: index)
+                        : deleteImageDialog(index: index),
+                    child: CircleImageDisplay(_images[index])));
           }),
     );
+  }
+
+  deleteImageDialog({index}) {
+    print("What is the index here: $index");
+    imageIdx = index;
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0)),
+            children: <Widget>[
+              SimpleDialogOption(
+                onPressed: () => removeImage(imageIdx),
+                child: ListTile(
+                  title: Text(
+                    'Remove Image',
+                    style: TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          );
+        });
   }
 
   void handleCamera() async {
