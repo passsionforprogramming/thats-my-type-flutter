@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -121,24 +122,108 @@ class _ProfileSetupState extends State<ProfileSetup> {
   }
 
   multiImageBuilder(screenWidth, screenHeight) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: GridView.builder(
-          itemCount: _images.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: screenWidth * .07,
-              mainAxisSpacing: screenWidth * .07),
-          itemBuilder: (BuildContext context, int index) {
-            return GestureDetector(
-                onTap: () {},
-                child: GestureDetector(
-                    onTap: () => chooseImage(index: index),
-                    onLongPress: () => _images[index] == null
-                        ? chooseImage(index: index)
-                        : deleteImageDialog(index: index),
-                    child: CircleImageDisplay(_images[index])));
-          }),
+    return Column(
+      children: <Widget>[
+        Container(
+          margin: EdgeInsets.only(top: screenHeight * .1),
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              CircleAvatar(
+                backgroundColor: kDarkerGreen,
+                radius: 5.0,
+              ),
+              SizedBox(
+                width: 3.0,
+              ),
+              CircleAvatar(
+                backgroundColor: Colors.grey[300],
+                radius: 5.0,
+              ),
+              SizedBox(
+                width: 3.0,
+              ),
+              CircleAvatar(
+                backgroundColor: Colors.grey[300],
+                radius: 5.0,
+              ),
+              SizedBox(
+                width: 3.0,
+              ),
+              CircleAvatar(
+                backgroundColor: Colors.grey[300],
+                radius: 5.0,
+              )
+            ],
+          ),
+        ),
+        Container(
+          alignment: Alignment.center,
+          margin: EdgeInsets.symmetric(vertical: screenHeight * .03),
+          child: Text(
+            "Why not add more photos?",
+            style: TextStyle(
+                fontFamily: "Raleway Bold",
+                color: kDarkerGreen,
+                fontSize: 24.0),
+          ),
+        ),
+        Container(
+          alignment: Alignment.center,
+          margin: EdgeInsets.symmetric(vertical: screenHeight * .001),
+          width: screenWidth * .9,
+          child: Text(
+            "It only takes a second and it boosts your chances of finding someone!",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontFamily: "Raleway", fontSize: 20.0),
+          ),
+        ),
+        Container(
+          height: screenHeight * .55,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: GridView.builder(
+                itemCount: _images.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: screenWidth * .07,
+                    mainAxisSpacing: screenWidth * .07),
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
+                      onTap: () {},
+                      child: GestureDetector(
+                          onTap: () => chooseImage(index: index),
+                          onLongPress: () => _images[index] == null
+                              ? chooseImage(index: index)
+                              : deleteImageDialog(index: index),
+                          child: CircleImageDisplay(_images[index])));
+                }),
+          ),
+        ),
+        Container(
+          width: screenWidth * .9,
+          child: RaisedButton(
+            onPressed: chooseImage,
+            color: kDarkerGreen,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "Continue",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                      fontFamily: "Gothic Semi-bold"),
+                )
+              ],
+            ),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25.0)),
+            padding: EdgeInsets.symmetric(vertical: 13.0),
+          ),
+        )
+      ],
     );
   }
 
@@ -155,6 +240,11 @@ class _ProfileSetupState extends State<ProfileSetup> {
               SimpleDialogOption(
                 onPressed: () => removeImage(imageIdx),
                 child: ListTile(
+                  leading: Icon(
+                    FontAwesomeIcons.trash,
+                    color: kDarkerGreen,
+                    size: 30.0,
+                  ),
                   title: Text(
                     'Remove Image',
                     style: TextStyle(
@@ -284,12 +374,24 @@ class _ProfileSetupState extends State<ProfileSetup> {
           child: RaisedButton(
             onPressed: chooseImage,
             color: kDarkerGreen,
-            child: Text(
-              "Add Photo",
-              style: TextStyle(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(
+                  FontAwesomeIcons.camera,
                   color: Colors.white,
-                  fontSize: 16.0,
-                  fontFamily: "Gothic Semi-bold"),
+                ),
+                SizedBox(
+                  width: screenWidth * .04,
+                ),
+                Text(
+                  "Add Photo",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.0,
+                      fontFamily: "Gothic Semi-bold"),
+                )
+              ],
             ),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15.0)),
