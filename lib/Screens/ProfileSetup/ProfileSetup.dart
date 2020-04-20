@@ -113,15 +113,20 @@ class _ProfileSetupState extends State<ProfileSetup> {
     return downloadUrl;
   }
 
-  multiImageBuilder() {
-    return GridView.builder(
-        itemCount: _images.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3, crossAxisSpacing: 4.0, mainAxisSpacing: 4.0),
-        itemBuilder: (BuildContext context, int index) {
-          return GestureDetector(
-              onTap: () {}, child: CircleImageDisplay(_images[index]));
-        });
+  multiImageBuilder(screenWidth, screenHeight) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: GridView.builder(
+          itemCount: _images.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: screenWidth * .07,
+              mainAxisSpacing: screenWidth * .07),
+          itemBuilder: (BuildContext context, int index) {
+            return GestureDetector(
+                onTap: () {}, child: CircleImageDisplay(_images[index]));
+          }),
+    );
   }
 
   void handleCamera() async {
@@ -266,7 +271,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
           inAsyncCall: loading,
           child: _images[0] == null
               ? initialImage(screenWidth, screenHeight)
-              : multiImageBuilder()),
+              : multiImageBuilder(screenWidth, screenHeight)),
     );
   }
 }
