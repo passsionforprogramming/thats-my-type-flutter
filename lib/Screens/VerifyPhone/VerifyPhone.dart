@@ -60,7 +60,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
       try {
         final PhoneVerificationCompleted verificationCompleted =
             (AuthCredential phoneCredential) async {
-          loggedInUser.linkWithCredential(phoneCredential);
+          await loggedInUser.linkWithCredential(phoneCredential);
           print("verification completed");
           Navigator.pushReplacement(
               context,
@@ -166,7 +166,7 @@ class _VerifyPhoneState extends State<VerifyPhone> {
 
     final PhoneVerificationCompleted verificationCompleted =
         (AuthCredential phoneCredential) async {
-      loggedInUser
+      await loggedInUser
           .linkWithCredential(phoneCredential); //link with different credential
       print("verification completed");
       Navigator.pushReplacement(

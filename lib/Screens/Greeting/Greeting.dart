@@ -8,6 +8,7 @@ import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:cloud_firestore/cloud_firestore.dart";
 import 'package:page_transition/page_transition.dart';
+import 'package:thatismytype/Screens/Greeting/ForgotPassword.dart';
 import 'package:thatismytype/Screens/Home/Home.dart';
 import 'package:thatismytype/Screens/VerifyPhone/VerifyPhone.dart';
 import 'package:thatismytype/Util/Validators.dart';
@@ -412,6 +413,27 @@ class _GreetingState extends State<Greeting> with TickerProviderStateMixin {
             onPressed: () {
               handleSubmit();
             },
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            Navigator.pushReplacement(
+                context,
+                PageTransition(
+                    child: ForgotPassword(),
+                    type: PageTransitionType.rightToLeft));
+          },
+          child: Container(
+            margin: EdgeInsets.only(top: screenHeight * .04),
+            alignment: Alignment.center,
+            width: .8 * screenWidth,
+            child: Text(
+              "Forgot Password?",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 17.0,
+                  fontFamily: "Josefin Sans Bold"),
+            ),
           ),
         ),
         Container(

@@ -1,10 +1,12 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:thatismytype/Constants/Palette.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:thatismytype/Screens/ProfileSetup/CircleImageDisplay.dart';
@@ -12,19 +14,36 @@ import 'package:uuid/uuid.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image/image.dart' as Im;
+import "package:thatismytype/Screens/Home/Home.dart";
 
 class ProfileSetup extends StatefulWidget {
+  final String userId;
+  ProfileSetup({this.userId});
   @override
   _ProfileSetupState createState() => _ProfileSetupState();
 }
 
 class _ProfileSetupState extends State<ProfileSetup> {
   bool loading = false;
-  String imageID = Uuid().v4(); //initializing UUID
   int imageIdx;
   File file;
+  bool networkError = false;
+  FirebaseUser loggedInUser;
+  CollectionReference userRef = Firestore.instance.collection("users");
+  FirebaseAuth _auth = FirebaseAuth.instance;
   final StorageReference storageRef = FirebaseStorage.instance.ref();
   List<File> _images = List.generate(6, (index) => null, growable: true);
+
+  void getUser() async {
+    try {
+      loggedInUser = await _auth.currentUser();
+    } catch (e) {
+      setState(() {
+        networkError = true;
+      });
+    }
+  }
+
   chooseImage({index = 0}) {
     imageIdx = index;
     showDialog(
@@ -114,6 +133,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
   }
 
   Future<String> uploadImage(imageFile) async {
+    String imageID = Uuid().v4();
     StorageUploadTask uploadTask =
         storageRef.child("pro_$imageID.jpg").putFile(imageFile);
     StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
@@ -204,7 +224,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
         Container(
           width: screenWidth * .9,
           child: RaisedButton(
-            onPressed: chooseImage,
+            onPressed: handleImageUpload,
             color: kDarkerGreen,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -275,7 +295,8 @@ class _ProfileSetupState extends State<ProfileSetup> {
     });
   }
 
-  compressImage() async {
+  Future<File> compressImage({File file}) async {
+    String imageID = Uuid().v4();
     final tempDir =
         await getTemporaryDirectory(); //creating temporary directory
     final path = tempDir.path; //creating temporary path from directory
@@ -284,12 +305,49 @@ class _ProfileSetupState extends State<ProfileSetup> {
     final compressedImageFile = File('$path/img_$imageID.jpg')
       ..writeAsBytesSync(
           Im.encodeJpg(imageFile, quality: 85)); //writing JPG to temporary path
-    setState(() {
-      file = compressedImageFile;
-    });
+    return compressedImageFile;
+  }
+
+  handleImageUpload() async {
+    try {
+      setState(() {
+        loading = true;
+      });
+      List<String> urls = [];
+      for (File imageFile in _images) {
+        print("running...");
+        if (imageFile != null) {
+          final compressedFile = await compressImage(file: imageFile);
+          String downloadUrl = await uploadImage(compressedFile);
+          urls.add(downloadUrl);
+        }
+      }
+      if (urls.isNotEmpty) {
+        await userRef.document(loggedInUser.uid).updateData({
+          "phoneNumber": loggedInUser.phoneNumber,
+          "photoUrls": FieldValue.arrayUnion(urls)
+        });
+      }
+      setState(() {
+        loading = false;
+      });
+      Navigator.pushReplacement(
+          context,
+          PageTransition(
+              child: Home(),
+              type: PageTransitionType.leftToRight,
+              duration: Duration(milliseconds: 200)));
+    } catch (e) {
+      print("Here is the error in uploading $e");
+      setState(() {
+        loading = false;
+        networkError = true;
+      });
+    }
   }
 
   Column initialImage(screenWidth, screenHeight) {
+    print(loggedInUser.phoneNumber);
     return Column(
       children: <Widget>[
         Container(
@@ -400,6 +458,12 @@ class _ProfileSetupState extends State<ProfileSetup> {
         )
       ],
     );
+  }
+
+  @override
+  void initState() {
+    getUser();
+    super.initState();
   }
 
   @override
