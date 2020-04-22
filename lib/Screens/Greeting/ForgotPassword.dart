@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';
@@ -13,6 +14,9 @@ class ForgotPassword extends StatefulWidget {
 class _ForgotPasswordState extends State<ForgotPassword> {
   TextEditingController emailController;
   String email = "";
+  bool displayWarningBox = false;
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  GlobalKey<FormState> resetPasswordKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -30,7 +34,50 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     return "Plese enter a valid email";
   }
 
-  void sendPasswordLink() {}
+  Future<void> sendPasswordLink() async {
+    if (resetPasswordKey.currentState.validate()) {
+      try {
+        await _auth.sendPasswordResetEmail(email: email);
+        setState(() {
+          displayWarningBox = true;
+        });
+      } catch (e) {}
+    }
+  }
+
+  warningBox(screenWidth, screenHeight) {
+    return Container(
+        color: kDarkerAccentRedish,
+        padding: EdgeInsets.all(10.0),
+        margin: EdgeInsets.symmetric(vertical: screenHeight * .05),
+        child: Row(
+          children: <Widget>[
+            Icon(
+              Icons.info_outline,
+              color: Colors.white,
+              size: 35.0,
+            ),
+            SizedBox(
+              width: screenWidth * .1,
+            ),
+            Text(
+              "A password reset links has been sent to $email",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: "Gothic Semi-bold",
+                  fontSize: 18.0),
+            ),
+            SizedBox(
+              width: screenWidth * .1,
+            ),
+            Icon(
+              Icons.close,
+              color: Colors.white,
+              size: 35.0,
+            )
+          ],
+        ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +87,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       backgroundColor: kDarkerBackgroundColor,
       body: ListView(
         children: <Widget>[
+          displayWarningBox
+              ? warningBox(screenWidth, screenHeight)
+              : SizedBox(),
           Container(
             alignment: Alignment.center,
             margin: EdgeInsets.symmetric(
