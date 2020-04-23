@@ -10,6 +10,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:thatismytype/Constants/Palette.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:thatismytype/Screens/ProfileSetup/CircleImageDisplay.dart';
+import 'package:thatismytype/Screens/ProfileSetup/IntroduceYourself.dart';
 import 'package:uuid/uuid.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -334,7 +335,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
       Navigator.pushReplacement(
           context,
           PageTransition(
-              child: Home(),
+              child: IntroduceYourself(),
               type: PageTransitionType.leftToRight,
               duration: Duration(milliseconds: 200)));
     } catch (e) {
