@@ -29,6 +29,8 @@ class _IntroduceYourselfState extends State<IntroduceYourself> {
     });
   }
 
+  handleSubmit() {}
+
   displayDatePicker(screenHeight, screenWidth) {
     return showAnimatedDialog(
         context: context,
@@ -211,8 +213,11 @@ class _IntroduceYourselfState extends State<IntroduceYourself> {
                         child: HelloScreen(), type: PageTransitionType.scale));
               },
               decoration: InputDecoration(
+                  focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: kDarkerGreen, width: 2.0)),
                   labelText: "Name",
-                  labelStyle: TextStyle(fontFamily: "Raleway"),
+                  labelStyle:
+                      TextStyle(fontFamily: "Raleway", color: kDarkerGreen),
                   hintText: "Add your first name"),
             ),
           ),
@@ -229,8 +234,10 @@ class _IntroduceYourselfState extends State<IntroduceYourself> {
                           .toList()))
               : SizedBox(),
           Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: screenWidth * .1, vertical: screenHeight * .15),
+            margin: EdgeInsets.only(
+                left: .1 * screenWidth,
+                right: screenWidth * .1,
+                top: screenHeight * .12),
             child: RaisedButton(
               onPressed: () {
                 Navigator.pushReplacement(
