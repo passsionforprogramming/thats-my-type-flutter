@@ -39,6 +39,8 @@ dependencies:
   intl: ^0.16.0
   image_picker: ^0.6.5
   image: ^2.1.4
+  flutter_animated_dialog: ^1.0.3
+  flutter_time_date_picker: ^0.0.2
 
   flutter:
     sdk: flutter
