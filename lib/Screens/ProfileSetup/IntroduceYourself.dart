@@ -16,6 +16,7 @@ class _IntroduceYourselfState extends State<IntroduceYourself> {
   String gender;
   DateTime birthday;
   List<String> errors = [];
+  GlobalKey<FormState> introduceFormKey = GlobalKey<FormState>();
 
   showDatePicker() {
     DatePicker.showDatePicker(context,
@@ -29,7 +30,21 @@ class _IntroduceYourselfState extends State<IntroduceYourself> {
     });
   }
 
-  handleSubmit() {}
+  validateForm() {
+    if (gender == null) errors.add("Please select your gender");
+    if (birthday == null) errors.add("Please enter your date of birth");
+    if (birthday != null &&
+        birthday.add(Duration(days: 365 * 13)).isBefore(DateTime.now()))
+      errors.add("Sorry, You must be at least 13 years old to use this app.");
+  }
+
+  handleSubmit() {
+    errors = [];
+    if (introduceFormKey.currentState.validate()) {
+      validateForm();
+      if (errors.isNotEmpty) return;
+    }
+  }
 
   displayDatePicker(screenHeight, screenWidth) {
     return showAnimatedDialog(
@@ -65,199 +80,203 @@ class _IntroduceYourselfState extends State<IntroduceYourself> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: ListView(
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.only(top: screenHeight * .03),
-            alignment: Alignment.center,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                CircleAvatar(
-                  backgroundColor: Colors.grey[300],
-                  radius: 5.0,
-                ),
-                SizedBox(
-                  width: 3.0,
-                ),
-                CircleAvatar(
-                  backgroundColor: kDarkerGreen,
-                  radius: 5.0,
-                ),
-                SizedBox(
-                  width: 3.0,
-                ),
-                CircleAvatar(
-                  backgroundColor: Colors.grey[300],
-                  radius: 5.0,
-                ),
-                SizedBox(
-                  width: 3.0,
-                ),
-                CircleAvatar(
-                  backgroundColor: Colors.grey[300],
-                  radius: 5.0,
-                )
-              ],
+      body: Form(
+        child: ListView(
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(top: screenHeight * .03),
+              alignment: Alignment.center,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  CircleAvatar(
+                    backgroundColor: Colors.grey[300],
+                    radius: 5.0,
+                  ),
+                  SizedBox(
+                    width: 3.0,
+                  ),
+                  CircleAvatar(
+                    backgroundColor: kDarkerGreen,
+                    radius: 5.0,
+                  ),
+                  SizedBox(
+                    width: 3.0,
+                  ),
+                  CircleAvatar(
+                    backgroundColor: Colors.grey[300],
+                    radius: 5.0,
+                  ),
+                  SizedBox(
+                    width: 3.0,
+                  ),
+                  CircleAvatar(
+                    backgroundColor: Colors.grey[300],
+                    radius: 5.0,
+                  )
+                ],
+              ),
             ),
-          ),
-          Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.only(top: screenHeight * .05),
-            child: Text(
-              "Introduce Yourself",
-              style: TextStyle(
-                  color: kDarkerGreen,
-                  fontFamily: "Raleway Bold",
-                  fontSize: 28.0),
+            Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.only(top: screenHeight * .05),
+              child: Text(
+                "Introduce Yourself",
+                style: TextStyle(
+                    color: kDarkerGreen,
+                    fontFamily: "Raleway Bold",
+                    fontSize: 28.0),
+              ),
             ),
-          ),
-          Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.symmetric(
-                horizontal: screenWidth * .1, vertical: screenHeight * .02),
-            width: screenWidth * .8,
-            child: Text(
-              "Fill out the rest of your details so people know a little more about you.",
-              style: TextStyle(fontFamily: "Gothic"),
-              textAlign: TextAlign.center,
+            Container(
+              alignment: Alignment.center,
+              margin: EdgeInsets.symmetric(
+                  horizontal: screenWidth * .1, vertical: screenHeight * .02),
+              width: screenWidth * .8,
+              child: Text(
+                "Fill out the rest of your details so people know a little more about you.",
+                style: TextStyle(fontFamily: "Gothic"),
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: screenWidth * .1, vertical: screenHeight * .03),
-            child: Text(
-              "I am a...",
-              style: TextStyle(fontFamily: "Raleway", color: Colors.black87),
+            Container(
+              margin: EdgeInsets.symmetric(
+                  horizontal: screenWidth * .1, vertical: screenHeight * .03),
+              child: Text(
+                "I am a...",
+                style: TextStyle(fontFamily: "Raleway", color: Colors.black87),
+              ),
             ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: screenWidth * .1,
-            ),
-            child: Row(
-              children: <Widget>[
-                Radio(
+            Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: screenWidth * .1,
+              ),
+              child: Row(
+                children: <Widget>[
+                  Radio(
+                      activeColor: kDarkerGreen,
+                      value: "male",
+                      groupValue: gender,
+                      onChanged: (val) {
+                        setState(() {
+                          gender = val;
+                        });
+                      }),
+                  Text(
+                    "Male",
+                    style: TextStyle(fontFamily: "Gothic"),
+                  ),
+                  SizedBox(width: screenWidth * .1),
+                  Radio(
                     activeColor: kDarkerGreen,
-                    value: "male",
+                    value: "female",
                     groupValue: gender,
                     onChanged: (val) {
                       setState(() {
                         gender = val;
                       });
-                    }),
-                Text(
-                  "Male",
-                  style: TextStyle(fontFamily: "Gothic"),
-                ),
-                SizedBox(width: screenWidth * .1),
-                Radio(
-                  activeColor: kDarkerGreen,
-                  value: "female",
-                  groupValue: gender,
-                  onChanged: (val) {
-                    setState(() {
-                      gender = val;
-                    });
-                  },
-                ),
-                Text(
-                  "Female",
-                  style: TextStyle(fontFamily: "Gothic"),
-                )
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(
-                horizontal: screenWidth * .1, vertical: screenHeight * .04),
-            child: Text(
-              "Birthday",
-              style: TextStyle(color: Colors.black87, fontFamily: "Raleway"),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: screenWidth * .1,
-              vertical: screenHeight * .02,
-            ),
-            decoration: BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(width: 1.0, color: Colors.black26))),
-            child: GestureDetector(
-              onTap: () => showDatePicker(),
-              child: Text(
-                birthday == null
-                    ? "MM/DD/YYYY"
-                    : DateFormat.yMd("en_US").format(birthday),
-                style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 18.0,
-                    fontFamily: "Raleway"),
+                    },
+                  ),
+                  Text(
+                    "Female",
+                    style: TextStyle(fontFamily: "Gothic"),
+                  )
+                ],
               ),
             ),
-          ),
-          Container(
-            width: screenWidth * .8,
-            margin: EdgeInsets.symmetric(horizontal: screenWidth * .1),
-            child: TextFormField(
-              textInputAction: TextInputAction.done,
-              validator: (val) {
-                if (val.length > 2) return null;
-                return "The name must be at least two characters.";
-              },
-              onFieldSubmitted: (val) {
-                Navigator.pushReplacement(
-                    context,
-                    PageTransition(
-                        child: HelloScreen(), type: PageTransitionType.scale));
-              },
-              decoration: InputDecoration(
-                  focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: kDarkerGreen, width: 2.0)),
-                  labelText: "Name",
-                  labelStyle:
-                      TextStyle(fontFamily: "Raleway", color: kDarkerGreen),
-                  hintText: "Add your first name"),
-            ),
-          ),
-          errors.length > 0
-              ? Container(
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.symmetric(horizontal: screenWidth * .1),
-                  child: Column(
-                      children: errors
-                          .map((error) => Text(
-                                error,
-                                style: TextStyle(color: Colors.red),
-                              ))
-                          .toList()))
-              : SizedBox(),
-          Container(
-            margin: EdgeInsets.only(
-                left: .1 * screenWidth,
-                right: screenWidth * .1,
-                top: screenHeight * .12),
-            child: RaisedButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                    context,
-                    PageTransition(
-                        child: HelloScreen(),
-                        type: PageTransitionType.scale,
-                        duration: Duration(milliseconds: 200)));
-              },
-              color: kDarkerGreen,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25.0)),
-              padding: EdgeInsets.symmetric(vertical: 14.0),
+            Container(
+              margin: EdgeInsets.symmetric(
+                  horizontal: screenWidth * .1, vertical: screenHeight * .04),
               child: Text(
-                "Continue",
-                style: TextStyle(color: Colors.white, fontSize: 17.0),
+                "Birthday",
+                style: TextStyle(color: Colors.black87, fontFamily: "Raleway"),
               ),
             ),
-          )
-        ],
+            Container(
+              margin: EdgeInsets.symmetric(
+                horizontal: screenWidth * .1,
+                vertical: screenHeight * .02,
+              ),
+              decoration: BoxDecoration(
+                  border: Border(
+                      bottom: BorderSide(width: 1.0, color: Colors.black26))),
+              child: GestureDetector(
+                onTap: () => showDatePicker(),
+                child: Text(
+                  birthday == null
+                      ? "MM/DD/YYYY"
+                      : DateFormat.yMd("en_US").format(birthday),
+                  style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 18.0,
+                      fontFamily: "Raleway"),
+                ),
+              ),
+            ),
+            Container(
+              width: screenWidth * .8,
+              margin: EdgeInsets.symmetric(horizontal: screenWidth * .1),
+              child: TextFormField(
+                textInputAction: TextInputAction.done,
+                validator: (val) {
+                  if (val.length > 2) return null;
+                  return "The name must be at least two characters.";
+                },
+                onFieldSubmitted: (val) {
+                  Navigator.pushReplacement(
+                      context,
+                      PageTransition(
+                          child: HelloScreen(),
+                          type: PageTransitionType.scale));
+                },
+                decoration: InputDecoration(
+                    focusedBorder: UnderlineInputBorder(
+                        borderSide:
+                            BorderSide(color: kDarkerGreen, width: 2.0)),
+                    labelText: "Name",
+                    labelStyle:
+                        TextStyle(fontFamily: "Raleway", color: kDarkerGreen),
+                    hintText: "Add your first name"),
+              ),
+            ),
+            errors.length > 0
+                ? Container(
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.symmetric(horizontal: screenWidth * .1),
+                    child: Column(
+                        children: errors
+                            .map((error) => Text(
+                                  error,
+                                  style: TextStyle(color: Colors.red),
+                                ))
+                            .toList()))
+                : SizedBox(),
+            Container(
+              margin: EdgeInsets.only(
+                  left: .1 * screenWidth,
+                  right: screenWidth * .1,
+                  top: screenHeight * .12),
+              child: RaisedButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                      context,
+                      PageTransition(
+                          child: HelloScreen(),
+                          type: PageTransitionType.scale,
+                          duration: Duration(milliseconds: 200)));
+                },
+                color: kDarkerGreen,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25.0)),
+                padding: EdgeInsets.symmetric(vertical: 14.0),
+                child: Text(
+                  "Continue",
+                  style: TextStyle(color: Colors.white, fontSize: 17.0),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
