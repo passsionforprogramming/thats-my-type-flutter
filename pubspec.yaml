@@ -42,6 +42,7 @@ dependencies:
   flutter_animated_dialog: ^1.0.3
   flutter_time_date_picker: ^0.0.2
 
+
   flutter:
     sdk: flutter
 
