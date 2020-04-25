@@ -14,15 +14,25 @@ class _SwipePickerState extends State<SwipePicker> {
   });
 
   void removeCard(int index, DraggableDetails details) {
-    print("Here are the draggable details $details");
-    if (details.offset.direction > 1) {
-      print("swiped left");
-    } else {
+    print("Here is the dx: ${details.offset.dx}");
+    print("Here is the dy: ${details.offset.dy}");
+    print("Here is the distance: ${details.offset.distance}");
+    print("here is the velocity: ${details.velocity}");
+    if (details.offset.dx > 100 &&
+        details.velocity.pixelsPerSecond.dx > 100.0) {
       print("swiped right");
+      setState(() {
+        cardList.removeAt(index);
+      });
+    } else if (details.offset.dx < -100 &&
+        details.velocity.pixelsPerSecond.dx < -100.0) {
+      print("swiped left");
+      setState(() {
+        cardList.removeAt(index);
+      });
+    } else {
+      print("not enough juice go back");
     }
-    setState(() {
-      cardList.removeAt(index);
-    });
   }
 
   @override
@@ -33,13 +43,17 @@ class _SwipePickerState extends State<SwipePicker> {
         body: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
+        SizedBox(
+          height: screenHeight * .05,
+        ),
         Text(
           "That's My Type",
-          style: TextStyle(fontSize: 28.0),
+          style: TextStyle(fontSize: 28.0, fontFamily: "Playfair"),
         ),
         SizedBox(height: screenHeight * .03),
         Container(
           height: screenHeight * .72,
+          width: screenWidth,
           child: Stack(
             children: cardList
                 .asMap()

@@ -14,6 +14,7 @@ class _ProfileCardState extends State<ProfileCard> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     return Container(
+      width: screenWidth * .9,
       margin: EdgeInsets.symmetric(horizontal: .05 * screenWidth),
       height: screenHeight * .7,
       child: ListView(
