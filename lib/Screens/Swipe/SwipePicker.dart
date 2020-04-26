@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'ProfileCard.dart';
+import 'package:rxdart/rxdart.dart';
 
 class SwipePicker extends StatefulWidget {
   @override
@@ -7,11 +8,24 @@ class SwipePicker extends StatefulWidget {
 }
 
 class _SwipePickerState extends State<SwipePicker> {
+  double deltaX = 1.0;
+  double startPosition = 0;
+  double endPosition = 0;
+  final BehaviorSubject<double> subject = BehaviorSubject<double>.seeded(0.0);
   List<ProfileCard> cardList = List.generate(8, (index) {
     return ProfileCard(
         imageUrl:
             "https://haply-seed.s3.us-east-2.amazonaws.com/${index + 1}.jpg");
   });
+
+  void setDeltaX() {
+//    setState(() {
+//      deltaX = endPosition - startPosition;
+//      print("deltax: $deltaX");
+//    });
+    deltaX = endPosition - startPosition;
+    subject.add(deltaX / 1000);
+  }
 
   void removeCard(int index, DraggableDetails details) {
     print("Here is the dx: ${details.offset.dx}");
@@ -59,16 +73,38 @@ class _SwipePickerState extends State<SwipePicker> {
                 .asMap()
                 .map((index, card) => MapEntry(
                     index,
-                    Draggable(
-                      axis: Axis.horizontal,
-                      child: cardList[index],
-                      childWhenDragging: Container(),
-                      feedback: Material(
+                    Listener(
+                      onPointerDown: (PointerDownEvent evt) {
+                        //print("PointerDownEvent ${evt.localPosition.dx}");
+                        startPosition = evt.localPosition.dx;
+                      },
+                      onPointerMove: (PointerMoveEvent evt) {
+                        //print("Pointer Move Event: ${evt.localPosition.dx}");
+                        endPosition = evt.localPosition.dx;
+                        print("deltax position: $deltaX");
+                        setDeltaX();
+                      },
+                      child: Draggable(
+                        axis: Axis.horizontal,
                         child: cardList[index],
-                        elevation: 18.0,
+                        childWhenDragging: Container(),
+                        feedback: StreamBuilder(
+                            initialData: 0.0,
+                            stream: subject,
+                            builder:
+                                (BuildContext context, AsyncSnapshot snapshot) {
+                              print("Here is stream ${snapshot.data}");
+                              return Transform.rotate(
+                                angle: snapshot.data,
+                                child: Material(
+                                  child: cardList[index],
+                                  elevation: 18.0,
+                                ),
+                              );
+                            }),
+                        onDragEnd: (DraggableDetails details) =>
+                            removeCard(index, details),
                       ),
-                      onDragEnd: (DraggableDetails details) =>
-                          removeCard(index, details),
                     )))
                 .values
                 .toList(),
