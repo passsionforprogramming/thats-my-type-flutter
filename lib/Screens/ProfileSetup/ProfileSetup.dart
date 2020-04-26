@@ -123,7 +123,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
     });
     File croppedFile = await ImageCropper.cropImage(
         sourcePath: file.path,
-        aspectRatio: CropAspectRatio(ratioX: 1.0, ratioY: 1.0));
+        aspectRatio: CropAspectRatio(ratioX: 0.62, ratioY: 1.0));
     setState(() {
       loading = false;
       if (croppedFile != null) {

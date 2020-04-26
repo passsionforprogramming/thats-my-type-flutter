@@ -11,6 +11,8 @@ class _SwipePickerState extends State<SwipePicker> {
   double deltaX = 1.0;
   double startPosition = 0;
   double endPosition = 0;
+  List<double> table = [];
+  final BehaviorSubject<double> reverse = BehaviorSubject<double>();
   final BehaviorSubject<double> subject = BehaviorSubject<double>.seeded(0.0);
   List<ProfileCard> cardList = List.generate(8, (index) {
     return ProfileCard(
@@ -25,13 +27,14 @@ class _SwipePickerState extends State<SwipePicker> {
 //    });
     deltaX = endPosition - startPosition;
     subject.add(deltaX / 1000);
+    table.add(deltaX);
   }
 
   void removeCard(int index, DraggableDetails details) {
-    print("Here is the dx: ${details.offset.dx}");
-    print("Here is the dy: ${details.offset.dy}");
-    print("Here is the distance: ${details.offset.distance}");
-    print("here is the velocity: ${details.velocity}");
+//    print("Here is the dx: ${details.offset.dx}");
+//    print("Here is the dy: ${details.offset.dy}");
+//    print("Here is the distance: ${details.offset.distance}");
+//    print("here is the velocity: ${details.velocity}");
     if (details.offset.dx > 100 &&
         details.velocity.pixelsPerSecond.dx > 100.0) {
       print("swiped right");
@@ -66,6 +69,7 @@ class _SwipePickerState extends State<SwipePicker> {
         ),
         SizedBox(height: screenHeight * .03),
         Container(
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(25.0)),
           height: screenHeight * .72,
           width: screenWidth,
           child: Stack(
@@ -81,10 +85,14 @@ class _SwipePickerState extends State<SwipePicker> {
                       onPointerMove: (PointerMoveEvent evt) {
                         //print("Pointer Move Event: ${evt.localPosition.dx}");
                         endPosition = evt.localPosition.dx;
-                        print("deltax position: $deltaX");
+                        //print("deltax position: $deltaX");
                         setDeltaX();
                       },
                       child: Draggable(
+                        onDraggableCanceled:
+                            (Velocity velocity, Offset offset) {
+                          print("It was canceled");
+                        },
                         axis: Axis.horizontal,
                         child: cardList[index],
                         childWhenDragging: Container(),
@@ -96,7 +104,8 @@ class _SwipePickerState extends State<SwipePicker> {
                               print("Here is stream ${snapshot.data}");
                               return Transform.rotate(
                                 angle: snapshot.data,
-                                child: Material(
+                                child: Card(
+                                  color: Colors.white.withOpacity(0.0),
                                   child: cardList[index],
                                   elevation: 18.0,
                                 ),
