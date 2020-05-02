@@ -26,10 +26,32 @@ class _ProfileCardState extends State<ProfileCard> {
           children: <Widget>[
             ClipRRect(
               borderRadius: BorderRadius.circular(15.0),
-              child: CachedNetworkImage(
-                imageUrl: widget.imageUrl,
-                fit: BoxFit.fill,
-                height: screenHeight * .7,
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    foregroundDecoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          colors: [Colors.black12, Colors.black87],
+                          begin: Alignment(0.0, .6),
+                          end: Alignment(0.0, 1.0)),
+                    ),
+                    child: CachedNetworkImage(
+                      imageUrl: widget.imageUrl,
+                      fit: BoxFit.fill,
+                      height: screenHeight * .7,
+                    ),
+                  ),
+                  Positioned(
+                      bottom: screenHeight * .1,
+                      left: 15.0,
+                      child: Text(
+                        "Ima Sample, 29",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: "Roboto Bold",
+                            fontSize: 28.0),
+                      ))
+                ],
               ),
             ),
             Container(

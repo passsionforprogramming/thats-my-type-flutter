@@ -76,7 +76,9 @@ class _IntroduceYourselfState extends State<IntroduceYourself> {
       Navigator.pushReplacement(
           context,
           PageTransition(
-              child: HelloScreen(),
+              child: HelloScreen(
+                name: name,
+              ),
               type: PageTransitionType.scale,
               duration: Duration(milliseconds: 200)));
     } catch (e) {

@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(focusColor: Colors.red),
       title: 'Flutter Demo',
-      initialRoute: swipePicker,
+      initialRoute: greetingScreen,
       routes: {
         greetingScreen: (context) => Greeting(),
         home: (context) => Home(),
