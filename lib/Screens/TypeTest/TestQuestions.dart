@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class TypeTest {
   final int oneScore;
   final int twoScore;
@@ -8,6 +10,7 @@ class TypeTest {
   final int sevenScore;
   final int eightScore;
   final int nineScore;
+  final String id;
   int winningType;
   List<int> questionsAnswered = [];
   Map<String, int> score;
@@ -550,6 +553,7 @@ class TypeTest {
   ];
   TypeTest(
       {this.oneScore = 0,
+      this.id,
       this.twoScore = 0,
       this.threeScore = 0,
       this.fourScore = 0,
@@ -558,6 +562,7 @@ class TypeTest {
       this.sevenScore = 0,
       this.eightScore = 0,
       this.nineScore = 0,
+      this.winningType,
       this.questionsAnswered}) {
     this.score = {
       "one": oneScore,
@@ -608,5 +613,21 @@ class TypeTest {
         if (ele["question"] == question) ele["selected"] = false;
       });
     });
+  }
+
+  factory TypeTest.fromDocument(DocumentSnapshot doc) {
+    return TypeTest(
+        id: doc["id"],
+        oneScore: doc["oneScore"],
+        twoScore: doc["twoScore"],
+        threeScore: doc["threeScore"],
+        fourScore: doc["fourScore"],
+        fiveScore: doc["fiveScore"],
+        sixScore: doc["sixScore"],
+        sevenScore: doc["sevenScore"],
+        eightScore: doc["eightScore"],
+        nineScore: doc["nineScore"],
+        winningType: doc["winningType"],
+        questionsAnswered: doc["questionsAnswered"]);
   }
 }
